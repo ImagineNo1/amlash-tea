@@ -3,5 +3,3 @@ node_modules/
 out/
 .env*.local
 .env
-public/uploads/*
-!public/uploads/.gitkeep

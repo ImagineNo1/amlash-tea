@@ -1,30 +1,16 @@
 import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { NextResponse } from "next/server";
 import { getCurrentAdmin, ensureDefaultAdmin } from "@/lib/auth";
+import { getDb } from "@/lib/mongodb";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_TYPES = new Map([
-  ["image/jpeg", ".jpg"],
-  ["image/png", ".png"],
-  ["image/webp", ".webp"],
-  ["image/gif", ".gif"],
-]);
+const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
 async function requireAdmin() {
   const admin = await getCurrentAdmin();
   if (!admin) return null;
   await ensureDefaultAdmin();
   return admin;
-}
-
-function getSafeExtension(file) {
-  const mimeExtension = ALLOWED_TYPES.get(file.type);
-  if (mimeExtension) return mimeExtension;
-
-  const originalExtension = path.extname(file.name || "").toLowerCase();
-  return [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(originalExtension) ? originalExtension : "";
 }
 
 export async function POST(request) {
@@ -47,15 +33,21 @@ export async function POST(request) {
       return NextResponse.json({ message: "حجم تصویر باید کمتر از ۵ مگابایت باشد." }, { status: 400 });
     }
 
-    const extension = getSafeExtension(file);
-    const filename = `${Date.now()}-${randomUUID()}${extension}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    const bytes = await file.arrayBuffer();
+    const id = randomUUID();
+    const bytes = Buffer.from(await file.arrayBuffer());
+    const db = await getDb();
 
-    await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, filename), Buffer.from(bytes));
+    await db.collection("uploaded_images").insertOne({
+      _id: id,
+      filename: file.name || `${id}.image`,
+      contentType: file.type,
+      size: file.size,
+      data: bytes,
+      createdBy: admin.username || admin.sub || "admin",
+      createdAt: new Date(),
+    });
 
-    return NextResponse.json({ url: `/uploads/${filename}` });
+    return NextResponse.json({ url: `/api/uploads/${id}` });
   } catch (error) {
     return NextResponse.json({ message: error.message || "آپلود تصویر ناموفق بود." }, { status: 400 });
   }
