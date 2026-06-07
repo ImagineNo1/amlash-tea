@@ -1,0 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 20% 96%;
+    --foreground: 150 30% 14%;
+    --card: 40 20% 96%;
+    --card-foreground: 150 30% 14%;
+    --popover: 40 20% 96%;
+    --popover-foreground: 150 30% 14%;
+    --primary: 150 30% 14%;
+    --primary-foreground: 40 20% 96%;
+    --secondary: 40 15% 92%;
+    --secondary-foreground: 150 30% 14%;
+    --muted: 40 10% 90%;
+    --muted-foreground: 216 5% 64%;
+    --accent: 22 38% 53%;
+    --accent-foreground: 40 20% 96%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 216 12% 84%;
+    --input: 216 12% 84%;
+    --ring: 22 38% 53%;
+    --chart-1: 150 30% 25%;
+    --chart-2: 22 38% 53%;
+    --chart-3: 40 20% 70%;
+    --chart-4: 150 20% 40%;
+    --chart-5: 22 25% 40%;
+    --radius: 0.75rem;
+    --font-heading: "Vazirmatn", system-ui, sans-serif;
+    --font-body: "Vazirmatn", system-ui, sans-serif;
+    --font-display: "Vazirmatn", system-ui, sans-serif;
+    --font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 150 30% 8%;
+    --foreground: 40 20% 96%;
+    --card: 150 25% 12%;
+    --card-foreground: 40 20% 96%;
+    --popover: 150 25% 12%;
+    --popover-foreground: 40 20% 96%;
+    --primary: 40 20% 96%;
+    --primary-foreground: 150 30% 14%;
+    --secondary: 150 20% 16%;
+    --secondary-foreground: 40 20% 96%;
+    --muted: 150 15% 18%;
+    --muted-foreground: 40 10% 60%;
+    --accent: 22 38% 53%;
+    --accent-foreground: 40 20% 96%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 15% 20%;
+    --input: 150 15% 20%;
+    --ring: 22 38% 53%;
+    --chart-1: 150 30% 40%;
+    --chart-2: 22 38% 60%;
+    --chart-3: 40 20% 50%;
+    --chart-4: 150 20% 55%;
+    --chart-5: 22 25% 55%;
+    --sidebar-background: 150 30% 8%;
+    --sidebar-foreground: 40 20% 96%;
+    --sidebar-primary: 22 38% 53%;
+    --sidebar-primary-foreground: 40 20% 96%;
+    --sidebar-accent: 150 20% 16%;
+    --sidebar-accent-foreground: 40 20% 96%;
+    --sidebar-border: 150 15% 20%;
+    --sidebar-ring: 22 38% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    direction: rtl;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(40, 20%, 96%);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(22, 38%, 53%);
+  border-radius: 3px;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom liquid cursor trail */
+.cursor-trail {
+  pointer-events: none;
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(22, 38%, 53%, 0.3), transparent);
+  z-index: 9999;
+  transition: transform 0.1s ease;
+}
+
+/* Copper thread divider */
+.copper-thread {
+  height: 0.5px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(22, 38%, 53%),
+    transparent
+  );
+}
