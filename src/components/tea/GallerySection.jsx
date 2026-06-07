@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { X, ZoomIn } from "lucide-react";
