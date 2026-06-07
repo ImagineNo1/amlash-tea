@@ -3,38 +3,12 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { MapPin, Phone, Clock, Mail, Navigation } from "lucide-react";
+import { useContent } from "./ContentContext";
 
-const branches = [
-  {
-    name: "دفتر مرکزی — املش",
-    address: "گیلان، شهرستان رودسر، بخش اشکور، شهرک صنعتی املش",
-    phone: "۰۱۳-۱۲۳۴۵۶۷۸",
-    hours: "شنبه تا چهارشنبه: ۸ صبح تا ۵ عصر",
-    email: "info@amlash-tea.ir",
-    color: "#B47B59",
-    main: true,
-  },
-  {
-    name: "دفتر توزیع — رشت",
-    address: "گیلان، رشت، خیابان لاکانی، پلاک ۴۷",
-    phone: "۰۱۳-۳۳۴۵۶۷۸۹",
-    hours: "شنبه تا پنج‌شنبه: ۸ صبح تا ۶ عصر",
-    email: "rasht@amlash-tea.ir",
-    color: "#1A2F23",
-    main: false,
-  },
-  {
-    name: "نمایندگی — تهران",
-    address: "تهران، بازار چای و قند، راسته شمالی، پلاک ۱۱۲",
-    phone: "۰۲۱-۵۵۱۲۳۴۵۶",
-    hours: "شنبه تا پنج‌شنبه: ۹ صبح تا ۵ عصر",
-    email: "tehran@amlash-tea.ir",
-    color: "#1A2F23",
-    main: false,
-  },
-];
 
 export default function LocationSection() {
+  const { location, contact } = useContent();
+  const branches = (location.branches || []).map((branch, index) => ({ name: branch.name || branch.city, address: branch.address, phone: branch.phone, hours: branch.hours || contact.workingHours, email: branch.email || contact.email, main: index === 0 }));
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -58,7 +32,7 @@ export default function LocationSection() {
             className="text-xs tracking-widest font-medium"
             style={{ color: "#B47B59" }}
           >
-            مکان ما
+            {location.eyebrow}
           </span>
           <div className="w-8 h-[0.5px]" style={{ background: "#B47B59" }} />
         </motion.div>
@@ -70,7 +44,7 @@ export default function LocationSection() {
           className="text-3xl md:text-5xl font-bold text-center mb-4"
           style={{ color: "#F7F6F2", lineHeight: 1.5 }}
         >
-          شعبه‌های ما
+          {location.title}
         </motion.h2>
 
         <motion.p
@@ -80,7 +54,7 @@ export default function LocationSection() {
           className="text-center text-base mb-14 max-w-lg mx-auto"
           style={{ color: "rgba(247,246,242,0.5)", lineHeight: 1.9 }}
         >
-          در سراسر ایران در دسترس شما هستیم
+          {location.subtitle || "در سراسر ایران در دسترس شما هستیم"}
         </motion.p>
 
         <div className="grid lg:grid-cols-5 gap-8 items-start">
@@ -150,7 +124,7 @@ export default function LocationSection() {
             {/* Decorative map placeholder with OpenStreetMap iframe */}
             <iframe
               title="موقعیت چای املش"
-              src="https://www.openstreetmap.org/export/embed.html?bbox=49.5%2C36.9%2C50.5%2C37.5&layer=mapnik&marker=37.18%2C50.09"
+              src={location.mapUrl}
               className="w-full h-full border-0"
               loading="lazy"
             />
@@ -165,17 +139,9 @@ export default function LocationSection() {
           className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4"
         >
           {[
-            { icon: Phone, label: "خط مستقیم", value: "۰۱۳-۱۲۳۴۵۶۷۸" },
-            {
-              icon: Mail,
-              label: "ایمیل پشتیبانی",
-              value: "info@amlash-tea.ir",
-            },
-            {
-              icon: Clock,
-              label: "ساعات پاسخگویی",
-              value: "شنبه تا پنج‌شنبه، ۸ تا ۱۷",
-            },
+            { icon: Phone, label: "خط مستقیم", value: contact.phone },
+            { icon: Mail, label: "ایمیل پشتیبانی", value: contact.email },
+            { icon: Clock, label: "ساعات پاسخگویی", value: contact.workingHours },
           ].map((item, i) => {
             const Icon = item.icon;
             return (

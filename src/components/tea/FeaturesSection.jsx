@@ -2,27 +2,15 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Leaf, Sparkles, ShoppingBag } from "lucide-react";
+import { Leaf, Sparkles, ShoppingBag, ShieldCheck, Truck } from "lucide-react";
+import { useContent } from "./ContentContext";
 
-const features = [
-  {
-    icon: Leaf,
-    title: "چای ایرانی اصیل",
-    description: "برگچین‌شده از باغ‌های سرسبز شمال ایران",
-  },
-  {
-    icon: Sparkles,
-    title: "عطر و طعم طبیعی",
-    description: "بدون پیچیدگی، ساده، سالم و خوش‌نوش",
-  },
-  {
-    icon: ShoppingBag,
-    title: "آماده توسعه فروشگاهی",
-    description: "در آینده امکان خرید آنلاین محصولات فراهم می‌شود",
-  },
-];
+const iconMap = { Leaf, Sparkles, ShoppingBag, ShieldCheck, Truck };
+
 
 export default function FeaturesSection() {
+  const { features: featuresContent } = useContent();
+  const features = featuresContent.features || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -45,7 +33,7 @@ export default function FeaturesSection() {
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
         <div className="grid md:grid-cols-3 gap-8 md:gap-12">
           {features.map((feature, i) => {
-            const Icon = feature.icon;
+            const Icon = iconMap[feature.icon] || Leaf;
             return (
               <motion.div
                 key={i}

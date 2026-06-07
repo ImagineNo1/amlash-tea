@@ -3,47 +3,12 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { X, ZoomIn } from "lucide-react";
+import { useContent } from "./ContentContext";
 
-const images = [
-  {
-    src: "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/9cb6961a2_generated_image.png",
-    alt: "باغ چای سرسبز گیلان",
-    caption: "مزارع پله‌پله چای در ارتفاعات گیلان",
-    cols: "md:col-span-2 md:row-span-2",
-  },
-  {
-    src: "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/670c4ced6_generated_image.png",
-    alt: "جوانه‌های تازه چای",
-    caption: "برگ‌های تازه دست‌چین شده",
-    cols: "md:col-span-1 md:row-span-1",
-  },
-  {
-    src: "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/83a5be36f_generated_image.png",
-    alt: "دم‌آوری چای",
-    caption: "استکان چای با رنگ طلایی شفاف",
-    cols: "md:col-span-1 md:row-span-1",
-  },
-  {
-    src: "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/f1e04b9bf_generated_image.png",
-    alt: "برداشت دستی چای",
-    caption: "برداشت سنتی و دستی برگ‌ها",
-    cols: "md:col-span-1 md:row-span-1",
-  },
-  {
-    src: "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/b33293338_generated_image.png",
-    alt: "بسته‌بندی لوکس",
-    caption: "بسته‌بندی شیک و مناسب هدیه",
-    cols: "md:col-span-1 md:row-span-1",
-  },
-  {
-    src: "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/587a72d4f_generated_image.png",
-    alt: "نمای هوایی باغ چای",
-    caption: "نمای هوایی مزارع پله‌پله",
-    cols: "md:col-span-2 md:row-span-1",
-  },
-];
 
 export default function GallerySection() {
+  const { gallery } = useContent();
+  const images = (gallery.images || []).map((item, index) => typeof item === "string" ? { src: item, alt: gallery.title, caption: gallery.title, cols: index === 0 ? "md:col-span-2 md:row-span-2" : index === 5 ? "md:col-span-2 md:row-span-1" : "md:col-span-1 md:row-span-1" } : item);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [selected, setSelected] = useState(null);
@@ -67,7 +32,7 @@ export default function GallerySection() {
             className="text-xs tracking-widest font-medium"
             style={{ color: "#B47B59" }}
           >
-            گالری تصاویر
+            {gallery.eyebrow}
           </span>
           <div className="w-8 h-[0.5px]" style={{ background: "#B47B59" }} />
         </motion.div>
@@ -79,7 +44,7 @@ export default function GallerySection() {
           className="text-3xl md:text-5xl font-bold text-center mb-4"
           style={{ color: "#1A2F23", lineHeight: 1.5 }}
         >
-          از باغ تا فنجان
+          {gallery.title}
         </motion.h2>
 
         <motion.p
@@ -89,7 +54,7 @@ export default function GallerySection() {
           className="text-center text-base mb-14 max-w-lg mx-auto"
           style={{ color: "rgba(26,47,35,0.55)", lineHeight: 1.9 }}
         >
-          سفری بصری از طبیعت بکر گیلان تا فنجان گرم شما — حس تازگی را حس کنید
+          {gallery.subtitle || "تصاویر منتخب برند چای املش"}
         </motion.p>
 
         {/* Mosaic grid */}

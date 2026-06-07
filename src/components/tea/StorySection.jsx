@@ -2,35 +2,12 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useContent } from "./ContentContext";
 
-const milestones = [
-  {
-    year: "۱۳۸۵",
-    title: "ریشه در خاک گیلان",
-    description:
-      "داستان چای املش با یک رویا آغاز شد — یک باغ کوچک در دل جنگل‌های مه‌آلود گیلان و عشق به طعم اصیل چای شمال.",
-  },
-  {
-    year: "۱۳۹۰",
-    title: "رشد و توسعه",
-    description:
-      "با گسترش باغ‌ها، همراهی چایکاران محلی باتجربه و سرمایه‌گذاری روی کیفیت، اولین تن محصول ممتاز را تولید کردیم.",
-  },
-  {
-    year: "۱۳۹۵",
-    title: "ورود به بازار",
-    description:
-      "اولین بسته‌های رسمی چای املش با استقبال گرم خانواده‌های ایرانی روبرو شد. شهرت ما از دهان به دهان گشت.",
-  },
-  {
-    year: "امروز",
-    title: "میراث ماندگار",
-    description:
-      "هر روز هزاران خانواده ایرانی صبحشان را با فنجانی از چای اصیل گیلانی ما شروع می‌کنند. این افتخار ماست.",
-  },
-];
 
 export default function StorySection() {
+  const { story } = useContent();
+  const milestones = story.milestones || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -58,7 +35,7 @@ export default function StorySection() {
             className="text-xs tracking-widest font-medium"
             style={{ color: "#B47B59" }}
           >
-            داستان ما
+            {story.eyebrow}
           </span>
           <div className="w-8 h-[0.5px]" style={{ background: "#B47B59" }} />
         </motion.div>
@@ -70,7 +47,7 @@ export default function StorySection() {
           className="text-3xl md:text-5xl font-bold text-center mb-4"
           style={{ color: "#1A2F23", lineHeight: 1.5 }}
         >
-          از قلب کوه‌های گیلان
+          {story.title}
         </motion.h2>
 
         <motion.p
@@ -80,9 +57,7 @@ export default function StorySection() {
           className="text-center text-base mb-16 max-w-2xl mx-auto"
           style={{ color: "rgba(26,47,35,0.55)", lineHeight: 2 }}
         >
-          چای املش داستان عشق به طبیعت، احترام به سنت و تعهد به کیفیت است. از
-          زمانی که اولین برگ چای را در ارتفاعات گیلان چیدیم تا امروز، هیچ‌گاه از
-          اصول خود عقب‌نشینی نکردیم.
+          {story.body}
         </motion.p>
 
         <div className="grid md:grid-cols-2 gap-14 md:gap-20 items-start">
@@ -147,12 +122,7 @@ export default function StorySection() {
               transition={{ delay: 0.3 }}
               className="grid grid-cols-2 gap-4"
             >
-              {[
-                { num: "۵۰۰۰+", label: "مشتری راضی" },
-                { num: "۲۰+", label: "سال تجربه" },
-                { num: "۶", label: "نوع محصول" },
-                { num: "۳۱", label: "استان توزیع" },
-              ].map((stat, i) => (
+              {(story.stats || []).map((stat, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -188,7 +158,7 @@ export default function StorySection() {
               style={{ height: "270px" }}
             >
               <img
-                src="https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/9cb6961a2_generated_image.png"
+                src={story.image}
                 alt="باغ‌های چای گیلان"
                 className="w-full h-full object-cover"
               />

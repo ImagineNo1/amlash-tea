@@ -3,87 +3,8 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { useContent } from "./ContentContext";
 
-const products = [
-  {
-    name: "چای سیاه ممتاز (سرگل)",
-    type: "چای سیاه درجه یک",
-    image:
-      "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/83eb07455_generated_d1f24797.png",
-    badge: "پرفروش",
-    color: "#B47B59",
-    features: ["عطر بسیار قوی", "رنگ قرمز طلایی", "دم‌کشی سریع"],
-    description:
-      "بهترین و ظریف‌ترین برگ‌های دست‌چین شده از نوک جوانه‌های چای. طعمی غنی، عطری ماندگار و رنگ زیبای قرمز طلایی در هر استکان.",
-    weight: "بسته‌بندی ۱۰۰ و ۵۰۰ گرمی",
-    origin: "ارتفاعات شمالی گیلان",
-  },
-  {
-    name: "چای عطری",
-    type: "چای معطر",
-    image:
-      "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/158d12719_generated_3ea17b22.png",
-    badge: null,
-    color: "#1A2F23",
-    features: ["رایحه طبیعی", "ترکیب گیاهی", "تجربه متفاوت"],
-    description:
-      "ترکیبی منحصربه‌فرد از بهترین چای سیاه گیلان با رایحه‌های طبیعی. برای کسانی که می‌خواهند تجربه‌ای متفاوت و دل‌نشین داشته باشند.",
-    weight: "بسته‌بندی ۱۰۰ و ۲۵۰ گرمی",
-    origin: "گیلان با افزودنی‌های طبیعی",
-  },
-  {
-    name: "چای قلم",
-    type: "چای درجه یک",
-    image:
-      "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/d0c943f5e_generated_ef717b39.png",
-    badge: "محبوب",
-    color: "#B47B59",
-    features: ["طعم متعادل", "برگ‌های بلند", "مناسب هر روز"],
-    description:
-      "چای قلم با برگ‌های بلند و پیچیده شده، ظاهری زیبا و طعمی ملایم دارد. ایده‌آل برای مصرف روزانه خانواده‌هایی که سلیقه‌ای متعادل دارند.",
-    weight: "بسته‌بندی ۲۰۰ و ۵۰۰ گرمی",
-    origin: "باغ‌های مرکزی گیلان",
-  },
-  {
-    name: "چای شکسته (BOP)",
-    type: "چای BOP",
-    image:
-      "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/37fbc11ee_generated_dd320981.png",
-    badge: null,
-    color: "#1A2F23",
-    features: ["دم‌کشی فوری", "رنگ قوی", "اقتصادی"],
-    description:
-      "چای شکسته درشت با دم‌کشی سریع و رنگ قرمز عمیق. مناسب برای مصرف روزانه، مهمانی‌ها و هر مناسبتی که نیاز به آماده‌سازی سریع دارید.",
-    weight: "بسته‌بندی ۵۰۰ گرم و ۱ کیلو",
-    origin: "گیلان",
-  },
-  {
-    name: "بسته هدیه ویژه",
-    type: "بسته‌بندی لوکس",
-    image:
-      "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/8d0d58594_generated_8890b6a5.png",
-    badge: "جدید",
-    color: "#B47B59",
-    features: ["بسته‌بندی شیک", "ترکیب محصولات", "مناسب هدیه"],
-    description:
-      "ترکیبی از بهترین انواع چای در یک جعبه هدیه لوکس. ایده‌آل برای هدیه دادن به مدیران، دوستان و خانواده در مناسبت‌های خاص.",
-    weight: "ست ۳ عددی ۱۰۰ گرمی",
-    origin: "ترکیب بهترین محصولات",
-  },
-  {
-    name: "چای سیاه ممتاز عمده",
-    type: "بسته‌بندی صادراتی",
-    image:
-      "https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/03b1c0d94_generated_41168812.png",
-    badge: "عمده",
-    color: "#1A2F23",
-    features: ["بسته‌بندی کیلویی", "مناسب فروشگاه‌ها", "قیمت خاص"],
-    description:
-      "همان کیفیت چای ممتاز در بسته‌بندی اقتصادی کیلویی برای فروشگاه‌ها، رستوران‌ها و مصارف عمده. با خرید بالاتر از ۱۰ کیلو تخفیف ویژه دریافت کنید.",
-    weight: "بسته‌بندی ۱، ۲ و ۵ کیلویی",
-    origin: "ارتفاعات گیلان",
-  },
-];
 
 function ProductModal({ product, onClose }) {
   if (!product) return null;
@@ -152,7 +73,7 @@ function ProductModal({ product, onClose }) {
           </p>
 
           <div className="flex flex-wrap gap-2 mb-5">
-            {product.features.map((f, i) => (
+            {(product.features || []).map((f, i) => (
               <span
                 key={i}
                 className="px-3 py-1.5 rounded-full text-xs font-medium"
@@ -214,6 +135,8 @@ function ProductModal({ product, onClose }) {
 }
 
 export default function ProductsSection() {
+  const { products: productsContent } = useContent();
+  const products = productsContent.items || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [selected, setSelected] = useState(null);
@@ -236,7 +159,7 @@ export default function ProductsSection() {
             className="text-xs tracking-widest font-medium"
             style={{ color: "#B47B59" }}
           >
-            محصولات ما
+            {productsContent.eyebrow}
           </span>
           <div className="w-8 h-[0.5px]" style={{ background: "#B47B59" }} />
         </motion.div>
@@ -248,7 +171,7 @@ export default function ProductsSection() {
           className="text-3xl md:text-5xl font-bold text-center mb-4"
           style={{ color: "#1A2F23", lineHeight: 1.5 }}
         >
-          انواع چای املش
+          {productsContent.title}
         </motion.h2>
 
         <motion.p
@@ -258,7 +181,7 @@ export default function ProductsSection() {
           className="text-center text-base mb-14 max-w-lg mx-auto"
           style={{ color: "rgba(26,47,35,0.55)", lineHeight: 1.9 }}
         >
-          روی هر محصول کلیک کنید تا مشخصات کامل و ویژگی‌های آن را ببینید
+          {productsContent.subtitle}
         </motion.p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-8">
@@ -313,7 +236,7 @@ export default function ProductsSection() {
                 {product.name}
               </h4>
               <div className="flex flex-wrap gap-1.5">
-                {product.features.map((f, fi) => (
+                {(product.features || []).map((f, fi) => (
                   <span
                     key={fi}
                     className="text-xs px-2 py-0.5 rounded-full"

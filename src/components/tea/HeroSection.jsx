@@ -3,8 +3,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { useContent } from "./ContentContext";
 
 export default function HeroSection() {
+  const { hero } = useContent();
   const scrollToAbout = () => {
     const el = document.querySelector("#about");
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -28,7 +30,7 @@ export default function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/b1e553e91_generated_0b0fd9a1.png"
+          src={hero.backgroundImage}
           alt="Tea plantation in Amlash"
           className="w-full h-full object-cover"
         />
@@ -88,7 +90,7 @@ export default function HeroSection() {
               className="text-sm tracking-widest font-light"
               style={{ color: "#B47B59" }}
             >
-              عطر اصالت، طعم آرامش
+              {hero.eyebrow}
             </span>
           </motion.div>
 
@@ -100,9 +102,9 @@ export default function HeroSection() {
             className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight mb-6"
             style={{ color: "#F7F6F2", lineHeight: 1.4 }}
           >
-            طعم اصیل چای ایرانی
+            {hero.title}
             <br />
-            <span style={{ color: "#B47B59" }}>از قلب املش</span>
+            <span style={{ color: "#B47B59" }}>{hero.highlightedTitle}</span>
           </motion.h1>
 
           {/* Description */}
@@ -113,8 +115,7 @@ export default function HeroSection() {
             className="text-base md:text-lg leading-relaxed mb-10 max-w-lg"
             style={{ color: "rgba(247,246,242,0.8)", lineHeight: 1.9 }}
           >
-            چای املش با تکیه بر اصالت، کیفیت و عطر طبیعی برگ‌های چای شمال ایران،
-            تجربه‌ای گرم و آرامش‌بخش برای خانواده‌های ایرانی می‌سازد.
+            {hero.description}
           </motion.p>
 
           {/* CTAs */}
@@ -133,7 +134,7 @@ export default function HeroSection() {
                 boxShadow: "0 4px 20px rgba(180,123,89,0.3)",
               }}
             >
-              آشنایی با چای املش
+              {hero.primaryCta}
             </button>
             <button
               onClick={scrollToContact}
@@ -144,7 +145,7 @@ export default function HeroSection() {
                 background: "rgba(247,246,242,0.05)",
               }}
             >
-              تماس با ما
+              {hero.secondaryCta}
             </button>
           </motion.div>
         </div>

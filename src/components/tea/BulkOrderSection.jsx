@@ -6,31 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { PackageCheck, Truck, HeadphonesIcon, ShieldCheck } from "lucide-react";
+import { useContent } from "./ContentContext";
 
-const orderTypes = [
-  { value: "bulk", label: "سفارش عمده" },
-  { value: "question", label: "سوال یا مشاوره" },
-  { value: "reseller", label: "درخواست نمایندگی" },
-  { value: "gift", label: "سفارش هدیه سازمانی" },
-];
+const iconMap = { PackageCheck, Truck, HeadphonesIcon, ShieldCheck };
 
-const teaTypes = [
-  "چای سیاه ممتاز",
-  "چای عطری",
-  "چای قلم",
-  "چای شکسته",
-  "بسته هدیه",
-  "ترکیب چند نوع",
-];
-
-const perks = [
-  { icon: PackageCheck, text: "تضمین کیفیت" },
-  { icon: Truck, text: "ارسال سراسری" },
-  { icon: HeadphonesIcon, text: "پشتیبانی ۲۴ ساعته" },
-  { icon: ShieldCheck, text: "اصالت محصول" },
-];
 
 export default function BulkOrderSection() {
+  const { bulkOrder } = useContent();
+  const orderTypes = bulkOrder.orderTypes || [];
+  const teaTypes = bulkOrder.teaTypes || [];
+  const perks = (bulkOrder.perks || []).map((perk) => ({ ...perk, icon: iconMap[perk.icon] || PackageCheck }));
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const { toast } = useToast();
@@ -93,7 +78,7 @@ export default function BulkOrderSection() {
             className="text-xs tracking-widest font-medium"
             style={{ color: "#B47B59" }}
           >
-            سفارش عمده و استعلام
+            {bulkOrder.eyebrow}
           </span>
           <div className="w-8 h-[0.5px]" style={{ background: "#B47B59" }} />
         </motion.div>
@@ -105,7 +90,7 @@ export default function BulkOrderSection() {
           className="text-3xl md:text-5xl font-bold text-center mb-4"
           style={{ color: "#F7F6F2", lineHeight: 1.5 }}
         >
-          سفارش عمده یا سوال دارید؟
+          {bulkOrder.title}
         </motion.h2>
 
         <motion.p
@@ -115,8 +100,7 @@ export default function BulkOrderSection() {
           className="text-center text-base mb-14 max-w-lg mx-auto"
           style={{ color: "rgba(247,246,242,0.55)", lineHeight: 1.9 }}
         >
-          برای سفارش عمده، نمایندگی یا هر سوالی فرم زیر را پر کنید. تیم ما در
-          کمترین زمان پاسخ خواهد داد.
+          {bulkOrder.subtitle}
         </motion.p>
 
         {/* Perks bar */}

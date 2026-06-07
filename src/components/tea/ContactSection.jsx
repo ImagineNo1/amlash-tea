@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useContent } from "./ContentContext";
 
 export default function ContactSection() {
+  const { contact } = useContent();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const { toast } = useToast();
@@ -41,7 +43,7 @@ export default function ContactSection() {
             className="text-xs tracking-widest font-medium"
             style={{ color: "#B47B59" }}
           >
-            تماس با ما
+            {contact.eyebrow}
           </span>
           <div className="w-8 h-[0.5px]" style={{ background: "#B47B59" }} />
         </motion.div>
@@ -53,7 +55,7 @@ export default function ContactSection() {
           className="text-3xl md:text-5xl font-bold text-center mb-16"
           style={{ color: "#1A2F23", lineHeight: 1.5 }}
         >
-          با ما در ارتباط باشید
+          {contact.title}
         </motion.h2>
 
         <div className="grid md:grid-cols-2 gap-12 md:gap-20">
@@ -64,13 +66,9 @@ export default function ContactSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-8"
           >
-            <ContactItem icon={Phone} label="تلفن" value="013-12345678" />
-            <ContactItem icon={Mail} label="ایمیل" value="info@amlash-tea.ir" />
-            <ContactItem
-              icon={MapPin}
-              label="آدرس"
-              value="گیلان، املش، شهرک صنعتی املش"
-            />
+            <ContactItem icon={Phone} label="تلفن" value={contact.phone} />
+            <ContactItem icon={Mail} label="ایمیل" value={contact.email} />
+            <ContactItem icon={MapPin} label="آدرس" value={contact.address} />
 
             {/* Social / Instagram hint */}
             <div className="pt-4">

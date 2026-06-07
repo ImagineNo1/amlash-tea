@@ -3,49 +3,8 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Star, ChevronRight, ChevronLeft, Quote } from "lucide-react";
+import { useContent } from "./ContentContext";
 
-const testimonials = [
-  {
-    name: "فاطمه رضایی",
-    city: "تهران",
-    rating: 5,
-    text: "واقعاً تفاوت چای املش با چای‌های دیگه محسوسه. عطرش فوق‌العاده‌ست و رنگ دم‌کردنش بی‌نظیره. حالا هر روز صبح با چای املش روزم رو شروع می‌کنم.",
-    avatar: "ف",
-    avatarColor: "#B47B59",
-  },
-  {
-    name: "محمد کریمی",
-    city: "مشهد",
-    rating: 5,
-    text: "به عنوان کسی که ۲۰ ساله دنبال چای با کیفیت می‌گردم، چای ممتاز املش بهترین چیزیه که تا حالا نوشیدم. تلخی ملایم و عطر جذابش بی‌نظیره.",
-    avatar: "م",
-    avatarColor: "#1A2F23",
-  },
-  {
-    name: "زهرا احمدی",
-    city: "اصفهان",
-    rating: 5,
-    text: "بسته‌بندی خیلی شیک و مناسب هدیه دادنه. چند بسته برای مهمانی خریدم و همه مهمانا ازم پرسیدن این چای از کجاست! حتماً دوباره سفارش می‌دم.",
-    avatar: "ز",
-    avatarColor: "#B47B59",
-  },
-  {
-    name: "علی موسوی",
-    city: "رشت",
-    rating: 5,
-    text: "خودم اهل گیلانم و می‌دونم چای خوب چه طعمی داره. چای قلم املش دقیقاً همون طعم اصیل شمالیه. خوشحالم یه برند محلی اینقدر باکیفیته.",
-    avatar: "ع",
-    avatarColor: "#1A2F23",
-  },
-  {
-    name: "مریم نجفی",
-    city: "شیراز",
-    rating: 5,
-    text: "چای شکسته‌شون برای مهمانی عالیه. رنگ قرمز شفافی که داره و عطر دلپذیرش همه رو شگفت‌زده می‌کنه. قیمتش هم برای این کیفیت خیلی مناسبه.",
-    avatar: "م",
-    avatarColor: "#B47B59",
-  },
-];
 
 function StarRating({ count }) {
   return (
@@ -58,14 +17,18 @@ function StarRating({ count }) {
 }
 
 export default function TestimonialsSection() {
+  const { testimonials: testimonialsContent } = useContent();
+  const testimonials = testimonialsContent.items || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [active, setActive] = useState(0);
 
   const prev = () =>
-    setActive((a) => (a === 0 ? testimonials.length - 1 : a - 1));
+    setActive((a) => (a === 0 ? Math.max(testimonials.length - 1, 0) : a - 1));
   const next = () =>
     setActive((a) => (a === testimonials.length - 1 ? 0 : a + 1));
+
+  if (!testimonials.length) return null;
 
   return (
     <section
@@ -97,7 +60,7 @@ export default function TestimonialsSection() {
             className="text-xs tracking-widest font-medium"
             style={{ color: "#B47B59" }}
           >
-            رضایت مشتریان
+            {testimonialsContent.eyebrow}
           </span>
           <div className="w-8 h-[0.5px]" style={{ background: "#B47B59" }} />
         </motion.div>
@@ -109,7 +72,7 @@ export default function TestimonialsSection() {
           className="text-3xl md:text-5xl font-bold text-center mb-16"
           style={{ color: "#F7F6F2", lineHeight: 1.5 }}
         >
-          مشتریان ما چه می‌گویند؟
+          {testimonialsContent.title}
         </motion.h2>
 
         {/* Main featured testimonial */}

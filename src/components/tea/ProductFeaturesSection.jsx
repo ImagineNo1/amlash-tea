@@ -2,60 +2,15 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Wind, Droplets, Sun, Award, Leaf, Heart } from "lucide-react";
+import { Wind, Droplets, Sun, Award, Leaf, Heart, PackageCheck } from "lucide-react";
+import { useContent } from "./ContentContext";
 
-const features = [
-  {
-    icon: Wind,
-    title: "عطر ماندگار",
-    description:
-      "برگ‌های تازه دست‌چین شده با روش‌های سنتی فرآوری می‌شوند تا عطر طبیعی چای حفظ بماند.",
-    stat: "۱۰۰٪",
-    statLabel: "طبیعی",
-  },
-  {
-    icon: Droplets,
-    title: "رنگ شفاف و زیبا",
-    description:
-      "رنگ قرمز طلایی دم‌کرده چای نشانه‌ای از خلوص و کیفیت بالای برگ‌های چای گیلانی است.",
-    stat: "۳",
-    statLabel: "درجه اول",
-  },
-  {
-    icon: Sun,
-    title: "برداشت فصلی",
-    description:
-      "چای در بهار و تابستان از مزارع پله‌پله ارتفاعات گیلان برداشت می‌شود تا بهترین طعم داشته باشد.",
-    stat: "۲",
-    statLabel: "فصل برداشت",
-  },
-  {
-    icon: Award,
-    title: "کیفیت تضمینی",
-    description:
-      "هر بسته چای قبل از ارسال کنترل کیفیت می‌شود تا مطمئن شویم بهترین محصول به دستتان می‌رسد.",
-    stat: "۱۵+",
-    statLabel: "سال تجربه",
-  },
-  {
-    icon: Leaf,
-    title: "بدون افزودنی",
-    description:
-      "چای ما کاملاً خالص و بدون هیچ گونه رنگ، طعم مصنوعی یا مواد نگهدارنده تهیه می‌شود.",
-    stat: "۰",
-    statLabel: "افزودنی",
-  },
-  {
-    icon: Heart,
-    title: "خواص سلامتی",
-    description:
-      "سرشار از آنتی‌اکسیدان‌های طبیعی که به سلامت قلب، تقویت سیستم ایمنی و آرامش اعصاب کمک می‌کند.",
-    stat: "۵۰+",
-    statLabel: "آنتی‌اکسیدان",
-  },
-];
+const iconMap = { Wind, Droplets, Sun, Award, Leaf, Heart, PackageCheck };
+
 
 export default function ProductFeaturesSection() {
+  const { productFeatures } = useContent();
+  const features = productFeatures.features || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -78,7 +33,7 @@ export default function ProductFeaturesSection() {
             className="text-xs tracking-widest font-medium"
             style={{ color: "#B47B59" }}
           >
-            چرا چای املش؟
+            {productFeatures.eyebrow}
           </span>
           <div className="w-8 h-[0.5px]" style={{ background: "#B47B59" }} />
         </motion.div>
@@ -90,7 +45,7 @@ export default function ProductFeaturesSection() {
           className="text-3xl md:text-5xl font-bold text-center mb-4"
           style={{ color: "#1A2F23", lineHeight: 1.5 }}
         >
-          مزایای چای ما
+          {productFeatures.title}
         </motion.h2>
 
         <motion.p
@@ -100,13 +55,13 @@ export default function ProductFeaturesSection() {
           className="text-center text-base mb-16 max-w-xl mx-auto"
           style={{ color: "rgba(26,47,35,0.55)", lineHeight: 1.9 }}
         >
-          آنچه چای املش را از سایرین متمایز می‌کند
+          {productFeatures.subtitle}
         </motion.p>
 
         {/* Features grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {features.map((feature, i) => {
-            const Icon = feature.icon;
+            const Icon = iconMap[feature.icon] || Leaf;
             return (
               <motion.div
                 key={i}
