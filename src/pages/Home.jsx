@@ -15,9 +15,11 @@ import BulkOrderSection from "../components/tea/BulkOrderSection";
 import ContactSection from "../components/tea/ContactSection";
 import LocationSection from "../components/tea/LocationSection";
 import Footer from "../components/tea/Footer";
+import { ContentProvider } from "../components/tea/ContentContext";
 
-export default function Home() {
+export default function Home({ content }) {
   return (
+    <ContentProvider content={content}>
     <div
       className="min-h-screen overflow-x-hidden"
       style={{ background: "#F7F6F2" }}
@@ -65,5 +67,6 @@ export default function Home() {
 
       <Footer />
     </div>
+    </ContentProvider>
   );
 }

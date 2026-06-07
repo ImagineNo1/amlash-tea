@@ -3,16 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useContent } from "./ContentContext";
 
-const navLinks = [
-  { label: "خانه", href: "#hero" },
-  { label: "درباره ما", href: "#about" },
-  { label: "محصولات", href: "#products" },
-  { label: "کیفیت چای", href: "#features" },
-  { label: "تماس با ما", href: "#contact" },
-];
 
 export default function Navbar() {
+  const { site } = useContent();
+  const navLinks = site.navLinks || [];
   const [visible, setVisible] = useState(false);
   const [lastScroll, setLastScroll] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -56,7 +52,7 @@ export default function Navbar() {
               style={{ color: "#1A2F23" }}
               onClick={() => scrollTo("#hero")}
             >
-              چای <span style={{ color: "#B47B59" }}>املش</span>
+              {site.brandName?.replace(site.logoAccent || "", "")} <span style={{ color: "#B47B59" }}>{site.logoAccent}</span>
             </h1>
 
             {/* Desktop */}

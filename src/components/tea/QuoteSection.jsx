@@ -2,8 +2,10 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useContent } from "./ContentContext";
 
 export default function QuoteSection() {
+  const { quote } = useContent();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -12,7 +14,7 @@ export default function QuoteSection() {
       {/* Background */}
       <div className="absolute inset-0">
         <img
-          src="https://media.base44.com/images/public/6a252eebc05f7ea73ab7493a/3af9ff6cd_generated_638df664.png"
+          src={quote.image}
           alt="Amlash tea terraces in morning mist"
           className="w-full h-full object-cover"
         />
@@ -30,7 +32,7 @@ export default function QuoteSection() {
           className="text-3xl md:text-5xl font-bold mb-6"
           style={{ color: "#B47B59", lineHeight: 1.5 }}
         >
-          هر فنجان، یک لحظه آرامش
+          {quote.title || "هر فنجان، یک لحظه آرامش"}
         </motion.h3>
 
         <motion.p
@@ -40,8 +42,7 @@ export default function QuoteSection() {
           className="text-base md:text-lg max-w-2xl mx-auto"
           style={{ color: "rgba(247,246,242,0.75)", lineHeight: 2 }}
         >
-          چای فقط یک نوشیدنی نیست، بخشی از گفت‌وگوها، مهمانی‌ها، صبحانه‌ها و
-          لحظه‌های آرام زندگی ماست.
+          {quote.text}
         </motion.p>
 
         {/* Decorative elements */}
