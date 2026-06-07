@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { defaultContent } from "@/lib/content-defaults";
-import { Check, Eye, FileText, Home, Image, Info, Leaf, LogOut, Package, Save, Settings, ShieldCheck, Users } from "lucide-react";
+import { Check, Eye, FileText, Home, Image, Info, Leaf, LogOut, Package, Save, Settings, ShieldCheck, Trash2, Upload, Users } from "lucide-react";
 
 const sections = [
   { key: "hero", label: "صفحه اصلی", icon: Home, description: "عنوان قهرمان، دکمه‌ها و تصویر پس‌زمینه" },
@@ -21,6 +21,141 @@ const sections = [
   { key: "location", label: "موقعیت", icon: Home, description: "نقشه و شعبه‌ها" },
   { key: "footer", label: "فوتر", icon: FileText, description: "متن کپی‌رایت و توضیح پایین سایت" },
 ];
+
+
+function normalizeGalleryImage(item, index, fallbackTitle) {
+  if (typeof item === "string") {
+    return { src: item, alt: fallbackTitle || "تصویر گالری", caption: fallbackTitle || "تصویر گالری", cols: index === 0 ? "md:col-span-2 md:row-span-2" : index === 5 ? "md:col-span-2 md:row-span-1" : "md:col-span-1 md:row-span-1" };
+  }
+
+  return {
+    src: item?.src || "",
+    alt: item?.alt || fallbackTitle || "تصویر گالری",
+    caption: item?.caption || fallbackTitle || "تصویر گالری",
+    cols: item?.cols || (index === 0 ? "md:col-span-2 md:row-span-2" : index === 5 ? "md:col-span-2 md:row-span-1" : "md:col-span-1 md:row-span-1"),
+  };
+}
+
+function ImageUploadButton({ label = "آپلود تصویر", compact = false, onUploaded }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+
+  const uploadImage = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setUploading(true);
+    setError("");
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+    const data = await res.json().catch(() => ({}));
+    setUploading(false);
+
+    if (!res.ok) {
+      setError(data.message || "آپلود تصویر ناموفق بود.");
+      return;
+    }
+
+    onUploaded(data.url);
+  };
+
+  return (
+    <div className={compact ? "space-y-1" : "space-y-2"}>
+      <label className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[#466332]/20 bg-[#466332]/10 px-4 text-sm font-bold text-[#466332] transition hover:bg-[#466332]/15 ${compact ? "h-10" : "h-12 w-full"}`}>
+        <Upload size={16} />
+        {uploading ? "در حال آپلود..." : label}
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={uploadImage} disabled={uploading} className="sr-only" />
+      </label>
+      {error && <p className="text-xs font-bold leading-6 text-red-600">{error}</p>}
+    </div>
+  );
+}
+
+function ProductsImageManager({ data, update }) {
+  const items = data.items || [];
+
+  const updateProductImage = (index, image) => {
+    const nextItems = items.map((item, itemIndex) => itemIndex === index ? { ...item, image } : item);
+    update({ items: nextItems });
+  };
+
+  if (!items.length) {
+    return <p className="rounded-2xl bg-[#F7F6F2] p-4 text-sm leading-7 text-[#1A2F23]/60">ابتدا محصولات را در JSON اضافه کنید، سپس برای هر محصول عکس آپلود کنید.</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <p className="text-sm font-black text-[#1A2F23]">آپلود دستی عکس محصولات</p>
+        <p className="mt-1 text-xs leading-6 text-[#1A2F23]/55">برای هر نوع چای، فایل را از سیستم انتخاب کنید؛ آدرس عکس به‌صورت خودکار در فیلد image همان محصول ثبت می‌شود.</p>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        {items.map((product, index) => (
+          <div key={`${product.name}-${index}`} className="rounded-2xl border border-[#1A2F23]/10 bg-[#F7F6F2] p-3">
+            <div className="mb-3 flex items-center gap-3">
+              <img src={product.image} alt={product.name || `product-${index + 1}`} className="h-16 w-16 rounded-xl object-cover bg-white" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-black text-[#1A2F23]">{product.name || `محصول ${index + 1}`}</p>
+                <p className="truncate text-xs text-[#1A2F23]/50" dir="ltr">{product.image}</p>
+              </div>
+            </div>
+            <ImageUploadButton compact label="انتخاب عکس از سیستم" onUploaded={(url) => updateProductImage(index, url)} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GalleryImageManager({ data, update }) {
+  const images = data.images || [];
+
+  const addGalleryImage = (src) => {
+    update({ images: [...images, { src, alt: data.title || "تصویر گالری", caption: data.title || "تصویر گالری", cols: "md:col-span-1 md:row-span-1" }] });
+  };
+
+  const replaceGalleryImage = (index, src) => {
+    const current = normalizeGalleryImage(images[index], index, data.title);
+    const nextImages = images.map((item, itemIndex) => itemIndex === index ? { ...current, src } : item);
+    update({ images: nextImages });
+  };
+
+  const removeGalleryImage = (index) => {
+    update({ images: images.filter((_, itemIndex) => itemIndex !== index) });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-dashed border-[#466332]/25 bg-[#466332]/5 p-4">
+        <p className="text-sm font-black text-[#1A2F23]">افزودن عکس جدید به گالری حال‌وهوای املش</p>
+        <p className="mt-1 text-xs leading-6 text-[#1A2F23]/55">تصویر را از سیستم آپلود کنید تا به انتهای گالری اضافه شود.</p>
+        <div className="mt-3"><ImageUploadButton label="آپلود و افزودن به گالری" onUploaded={addGalleryImage} /></div>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2">
+        {images.map((item, index) => {
+          const image = normalizeGalleryImage(item, index, data.title);
+          return (
+            <div key={`${image.src}-${index}`} className="rounded-2xl border border-[#1A2F23]/10 bg-[#F7F6F2] p-3">
+              <img src={image.src} alt={image.alt} className="mb-3 h-32 w-full rounded-xl object-cover bg-white" />
+              <p className="mb-3 truncate text-xs text-[#1A2F23]/50" dir="ltr">{image.src}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <ImageUploadButton compact label="جایگزینی عکس" onUploaded={(url) => replaceGalleryImage(index, url)} />
+                <button type="button" onClick={() => removeGalleryImage(index)} className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-3 text-xs font-bold text-red-600">
+                  <Trash2 size={14} /> حذف
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function TextInput({ label, value, onChange, textarea = false }) {
   const Comp = textarea ? "textarea" : "input";
@@ -156,7 +291,10 @@ function QuickEditor({ sectionKey, data, update }) {
     return <div className="grid gap-4 md:grid-cols-2"><TextInput label="brandName" value={data.brandName} onChange={(value) => update({ brandName: value })} /><TextInput label="tagline" value={data.tagline} onChange={(value) => update({ tagline: value })} /><TextInput label="logoAccent" value={data.logoAccent} onChange={(value) => update({ logoAccent: value })} /></div>;
   }
   if (sectionKey === "products") {
-    return <div className="space-y-4"><TextInput label="eyebrow" value={data.eyebrow} onChange={(value) => update({ eyebrow: value })} /><TextInput label="title" value={data.title} onChange={(value) => update({ title: value })} /><TextInput label="subtitle" value={data.subtitle} textarea onChange={(value) => update({ subtitle: value })} /><p className="rounded-2xl bg-[#F7F6F2] p-4 text-sm leading-7 text-[#1A2F23]/60">محصولات را از پنل JSON سمت چپ/پایین ویرایش کنید؛ هر محصول شامل name, type, image, badge, description, features, weight, origin است.</p></div>;
+    return <div className="space-y-5"><TextInput label="eyebrow" value={data.eyebrow} onChange={(value) => update({ eyebrow: value })} /><TextInput label="title" value={data.title} onChange={(value) => update({ title: value })} /><TextInput label="subtitle" value={data.subtitle} textarea onChange={(value) => update({ subtitle: value })} /><ProductsImageManager data={data} update={update} /><p className="rounded-2xl bg-[#F7F6F2] p-4 text-sm leading-7 text-[#1A2F23]/60">برای ویرایش متن و جزئیات هر محصول از JSON استفاده کنید؛ برای تغییر عکس هر محصول می‌توانید فایل را مستقیم از سیستم آپلود کنید.</p></div>;
+  }
+  if (sectionKey === "gallery") {
+    return <div className="space-y-5"><TextInput label="eyebrow" value={data.eyebrow} onChange={(value) => update({ eyebrow: value })} /><TextInput label="title" value={data.title} onChange={(value) => update({ title: value })} /><TextInput label="subtitle" value={data.subtitle || ""} textarea onChange={(value) => update({ subtitle: value })} /><GalleryImageManager data={data} update={update} /></div>;
   }
   return <div className="space-y-4"><TextInput label="eyebrow" value={data.eyebrow} onChange={(value) => update({ eyebrow: value })} /><TextInput label="title" value={data.title} onChange={(value) => update({ title: value })} /><TextInput label="subtitle / body" value={data.subtitle || data.body || ""} textarea onChange={(value) => update(data.body !== undefined ? { body: value } : { subtitle: value })} /><p className="rounded-2xl bg-[#F7F6F2] p-4 text-sm leading-7 text-[#1A2F23]/60">برای آرایه‌ها و آیتم‌های تکرارشونده این بخش از ویرایشگر JSON استفاده کنید.</p></div>;
 }
