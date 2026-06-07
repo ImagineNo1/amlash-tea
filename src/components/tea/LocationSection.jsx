@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { MapPin, Phone, Clock, Mail, Navigation } from "lucide-react";
