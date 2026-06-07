@@ -12,9 +12,11 @@ export async function POST(request) {
       return NextResponse.json({ message: "نام کاربری یا رمز عبور اشتباه است" }, { status: 401 });
     }
     const token = createToken({ sub: String(user._id), username: user.username, role: user.role });
-    setSessionCookie(token);
     await db.collection("admin_users").updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
-    return NextResponse.json({ ok: true });
+
+    const response = NextResponse.json({ ok: true });
+    setSessionCookie(token, response);
+    return response;
   } catch (error) {
     return NextResponse.json({ message: error.message || "خطای ورود" }, { status: 500 });
   }
