@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Navbar from "../components/tea/Navbar";
 import HeroSection from "../components/tea/HeroSection";
